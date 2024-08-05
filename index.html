@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+  <title>コロニー行動</title>
+
+  <!-- Style seets -->
+</head>
+
+<body style="background-color:#F1F4F8">
+  <div class="container">
+    <div class="row bg-dark bg-gradient sticky-top">
+      <div class="my-1">
+        <h2 class="text-white" style="margin-top: 0.5rem; font-weight: bold; text-align: center;">コロニー行動</h1>
+      </div>
+      <!--Bootstrap Bundle with Popper -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+    </div>
+
+    <div class="row">
+      <div id="list" class="col-12"></div>
+    </div>
+  </div>
+  <script>
+    // データのキーは 曜日１桁、時刻を8で割った余り1桁
+    // 曜日は 0 (日曜日) から6 (土曜日) まで
+    var colony_data_list =
+    {
+      // 日曜日(0)
+      "00": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "建築加速で稼ぐべし",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "建築加速（1分）": "900"
+        }
+      },
+      "01": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "中立生物を星2へ": "200,000",
+          "中立生物を星3へ": "400,000",
+          "中立生物を星4へ": "800,000",
+          "中立生物を星5へ": "100,0000",
+          "中立生物を星6へ": "2,000,000",
+          "中立生物を星7へ": "3,000,000",
+          "中立生物を星8へ": "4,500,000",
+          "中立生物を星9へ": "6,000,000",
+          "中立生物を星10へ": "8,000,000",
+          "中立生物を星11へ": "10,000,000",
+          "中立生物残骸消耗": "400",
+          "中立生物残骸を獲得": "200",
+          "中立生物飼料を消費": "50",
+          "中立生物飼料を養殖": "100",
+          "中立生物を孵化": "200,000",
+          "加速全般（1分）": "400",
+        }
+      },
+      "02": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "建築加速（1分）": "400",
+          "進化加速（1分）": "400",
+          "孵化加速（1分）": "400"
+        }
+      },
+      "03": {
+        "name": {
+          "コロニー進化": "true",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "平日に中立孵化して貯めておこう",
+        "item": {
+          "中立生物を星2へ": "200,000",
+          "中立生物を星3へ": "400,000",
+          "中立生物を星4へ": "800,000",
+          "中立生物を星5へ": "100,0000",
+          "中立生物を星6へ": "2,000,000",
+          "中立生物を星7へ": "3,000,000",
+          "中立生物を星8へ": "4,500,000",
+          "中立生物を星9へ": "6,000,000",
+          "中立生物を星10へ": "8,000,000",
+          "中立生物を星11へ": "10,000,000",
+          "中立生物残骸消耗": "400",
+          "中立生物残骸を獲得": "200",
+          "中立生物飼料を消費": "50",
+          "中立生物飼料を養殖": "100",
+          "中立生物を孵化": "200,000",
+          "進化加速（1分）": "800",
+          "進化戦闘力（+1）": "400",
+        }
+      },
+      "04": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "加速全般（1分）": "400"
+        }
+      },
+      "05": {
+        "name": {
+          "兵隊アリ孵化": "true",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "平日に中立孵化して貯めておこう",
+        "item": {
+          "中立生物を星2へ": "200,000",
+          "中立生物を星3へ": "400,000",
+          "中立生物を星4へ": "800,000",
+          "中立生物を星5へ": "100,0000",
+          "中立生物を星6へ": "2,000,000",
+          "中立生物を星7へ": "3,000,000",
+          "中立生物を星8へ": "4,500,000",
+          "中立生物を星9へ": "6,000,000",
+          "中立生物を星10へ": "8,000,000",
+          "中立生物を星11へ": "10,000,000",
+          "中立生物残骸消耗": "400",
+          "中立生物残骸を獲得": "200",
+          "中立生物飼料を消費": "50",
+          "中立生物飼料を養殖": "100",
+          "中立生物を孵化": "200,000",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "06": {
+        "name": {
+          "全面に発展": "false",
+        },
+        "requirement": "小",
+        "recommendation": "◎",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400"
+        }
+      },
+      "07": {
+        "name": {
+          "全面に発展": "false",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "平日に中立孵化して貯めておこう",
+        "item": {
+          "中立生物を星2へ": "200,000",
+          "中立生物を星3へ": "400,000",
+          "中立生物を星4へ": "800,000",
+          "中立生物を星5へ": "100,0000",
+          "中立生物を星6へ": "2,000,000",
+          "中立生物を星7へ": "3,000,000",
+          "中立生物を星8へ": "4,500,000",
+          "中立生物を星9へ": "6,000,000",
+          "中立生物を星10へ": "8,000,000",
+          "中立生物を星11へ": "10,000,000",
+          "中立生物残骸消耗": "400",
+          "中立生物残骸を獲得": "200",
+          "中立生物飼料を消費": "50",
+          "中立生物飼料を養殖": "100",
+          "中立生物を孵化": "200,000",
+          "加速全般（1分）": "400",
+        }
+      },
+      // 月曜日(1)
+      "10": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+        }
+      },
+      "11": {
+        "name": {
+          "コロニー進化": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "進化戦闘力（+1）": "400",
+          "進化加速（1分）": "800",
+        }
+      },
+      "12": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+        }
+      },
+      "13": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "加速（1分）": "400",
+        }
+      },
+      "14": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "進化戦闘力（+1）": "400",
+          "建築戦闘力（+1）": "1,000",
+        }
+      },
+      "15": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "建築加速（1分）": "900",
+        }
+      },
+      "16": {
+        "name": {
+          "全面に発展": "false",
+        },
+        "requirement": "小",
+        "recommendation": "◎",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      "17": {
+        "name": {
+          "全面に発展": "false",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      // 火曜日(2)
+      "20": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "建築加速（1分）": "900",
+        }
+      },
+      "21": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "生命エッセンス使用（1つ）": "25,000",
+          "ｎ星細胞を獲得（1つ）": "N/A",
+          "ｎ星細胞を消耗（1つ）": "N/A",
+          "細胞液ｎを消耗（1つ）": "N/A",
+        }
+      },
+      "22": {
+        "name": {
+          "兵隊アリ孵化": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "孵化加速（1分）": "400",
+        }
+      },
+      "23": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "◎",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "兵隊アリ孵化（略）": "N/A",
+          "生命エッセンス使用（1つ）": "25,000",
+          "ｎ星細胞を獲得（1つ）": "N/A",
+          "ｎ星細胞を消耗（1つ）": "N/A",
+          "細胞液ｎを消耗（1つ）": "N/A",
+        }
+      },
+      "24": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築加速（1分）": "400",
+          "進化加速（1分）": "400",
+          "孵化加速（1分）": "400"
+        }
+      },
+      "25": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+          "生命エッセンス使用（1つ）": "25,000",
+          "ｎ星細胞を獲得（1つ）": "N/A",
+          "ｎ星細胞を消耗（1つ）": "N/A",
+          "細胞液ｎを消耗（1つ）": "N/A",
+        }
+      },
+      "26": {
+        "name": {
+          "全面に発展": "false",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      "27": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "〇",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "生命エッセンス使用（1つ）": "25,000",
+          "ｎ星細胞を獲得（1つ）": "N/A",
+          "ｎ星細胞を消耗（1つ）": "N/A",
+          "細胞液ｎを消耗（1つ）": "N/A",
+        }
+      },
+      // 水曜日(3)
+      "30": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "建築加速（1分）": "900",
+        }
+      },
+      "31": {
+        "name": {
+          "コロニー進化": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "進化戦闘力（+1）": "400",
+          "進化加速（1分）": "800",
+          "残骸消費（1個）": "700",
+        }
+      },
+      "32": {
+        "name": {
+          "兵隊アリ孵化": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "孵化加速（1分）": "400",
+        }
+      },
+      "33": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "最強戦域戦の進化とまとめて稼ごう！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "残骸消費（1個）": "700",
+        }
+      },
+      "34": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "◎",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      "35": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "最強戦域戦の進化とまとめて稼ごう！",
+        "item": {
+          "建築加速（1分）": "400",
+          "進化加速（1分）": "400",
+          "孵化加速（1分）": "400",
+          "残骸消費（1個）": "700",
+        }
+      },
+      "36": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "骨残骸消費が無いので無理はせず",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "37": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "◎",
+        "comment": "最強戦域戦の進化とまとめて稼ごう！",
+        "item": {
+          "建築加速（1分）": "400",
+          "進化加速（1分）": "400",
+          "孵化加速（1分）": "400",
+          "残骸消費（1個）": "700",
+        }
+      },
+      // 木曜日(4)
+      "40": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "建築加速（1分）": "900",
+        }
+      },
+      "41": {
+        "name": {
+          "特化アリ育成": "true",
+        },
+        "requirement": "※",
+        "recommendation": "◎",
+        "comment": "無料分以外の卵は貯めてここで使おう！",
+        "item": {
+          "胞子交換（1個）": "1,000",
+          "胞子使用（1個）": "2,000",
+          "経験値取得（10exp）": "1",
+          "各種卵使用（略）": "N/A",
+        }
+      },
+      "42": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "建築加速（1分）": "400",
+          "進化加速（1分）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "43": {
+        "name": {
+          "特化アリ育成": "true",
+        },
+        "requirement": "※",
+        "recommendation": "◎",
+        "comment": "無料分以外の卵は貯めてここで使おう！",
+        "item": {
+          "胞子交換（1個）": "1,000",
+          "胞子使用（1個）": "2,000",
+          "経験値取得（10exp）": "1",
+          "各種卵使用（略）": "N/A",
+        }
+      },
+      "44": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "加速（1分）": "400",
+        }
+      },
+      "45": {
+        "name": {
+          "特化アリ育成": "true",
+        },
+        "requirement": "※",
+        "recommendation": "◎",
+        "comment": "無料分以外の卵は貯めてここで使おう！",
+        "item": {
+          "胞子交換（1個）": "1,000",
+          "胞子使用（1個）": "2,000",
+          "経験値取得（10exp）": "1",
+          "各種卵使用（略）": "N/A",
+        }
+      },
+      "46": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "47": {
+        "name": {
+          "特化アリ育成": "true",
+        },
+        "requirement": "※",
+        "recommendation": "◎",
+        "comment": "無料分以外の卵は貯めてここで使おう！",
+        "item": {
+          "胞子交換（1個）": "1,000",
+          "胞子使用（1個）": "2,000",
+          "経験値取得（10exp）": "1",
+          "各種卵使用（略）": "N/A",
+        }
+      },
+      // 金曜日(5)
+      "50": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "加速（1分）": "400",
+        }
+      },
+      "51": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築加速（1分）": "400",
+          "進化加速（1分）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "52": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "53": {
+        "name": {
+          "兵隊アリ孵化": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "孵化加速（1分）": "400",
+        }
+      },
+      "54": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "55": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "◎",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      "56": {
+        "name": {
+          "コロニー進化": "false",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "進化戦闘力（+1）": "400",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      "57": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "加速（1分）": "400",
+        }
+      },
+      // 土曜日(6)
+      "60": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "△",
+        "comment": "",
+        "item": {
+          "加速（1分）": "400",
+        }
+      },
+      "61": {
+        "name": {
+          "コロニー進化": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "進化戦闘力（+1）": "400",
+          "進化加速（1分）": "800",
+        }
+      },
+      "62": {
+        "name": {
+          "蟻塚建設": "true",
+        },
+        "requirement": "大",
+        "recommendation": "×",
+        "comment": "要求ポイント大のためスルー推奨",
+        "item": {
+          "建設戦闘力（+1）": "1,000",
+          "建設加速（1分）": "900",
+        }
+      },
+      "63": {
+        "name": {
+          "兵隊アリ孵化": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "孵化加速（1分）": "400",
+        }
+      },
+      "64": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "65": {
+        "name": {
+          "全面に発展": "true",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "進化戦闘力（+1）": "400",
+          "孵化加速（1分）": "400",
+        }
+      },
+      "66": {
+        "name": {
+          "蟻塚建設": "false",
+        },
+        "requirement": "小",
+        "recommendation": "◎",
+        "comment": "要求ポイント小のためおすすめ！",
+        "item": {
+          "建築戦闘力（+1）": "1,000",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      },
+      "67": {
+        "name": {
+          "コロニー進化": "false",
+        },
+        "requirement": "中",
+        "recommendation": "〇",
+        "comment": "",
+        "item": {
+          "進化戦闘力（+1）": "1,000",
+          "兵隊アリ孵化（略）": "N/A",
+        }
+      }
+    };
+
+    // 画面初回読み込み時
+    window.onload = function () {
+      // 基準となる時刻
+      const date = new Date();
+
+      // リスト表示部の要素取得
+      target = document.getElementById("list");
+
+      // ページ先頭へ移動
+      window.scrollTo(0, 0);
+
+      // 既存の子要素全削除
+      while (target.firstChild) {
+        target.removeChild(target.firstChild);
+      }
+
+      // リストデータ作成
+      for (let i = 0; i < 24; i++) {
+        target.appendChild(buildDataFrame(date));
+        date.setHours(date.getHours() + 1);
+      }
+    }
+    // 画面の更新
+    function reWrite() {
+      location.reload(false);
+    }
+    // リストの１コマを作成
+    function buildDataFrame(date) {
+      // 該当時刻のコロニーデータ取得
+      var colonyData = colony_data_list[date2key(date)];
+
+      // 枠組み構築
+      var row = document.createElement("div");
+      row.setAttribute("class", "row mx-1 my-3 p-2 border justify-content-center");
+      switch (colonyData['recommendation']) {
+        case '◎': row.setAttribute("style", "background-color: #D0EAF5");
+          break;
+        case '〇': row.setAttribute("style", "background-color: #D7EDD4");
+          break;
+        case '△': row.setAttribute("style", "background-color: #FBF3D8");
+          break;
+        case '×': row.setAttribute("style", "background-color: #FCE0EC");
+          break;
+      }
+
+      for (key in colonyData['name']) {
+        var header1 = document.createElement("div");
+        header1.setAttribute("class", "col-10 h5");
+        header1.setAttribute("style", "font-size: 18px; font-weight: bold;");
+        row.appendChild(header1);
+        header1.textContent = sampleDate(date, "MM/DD(W) hh:05" + " " + key);
+
+        var header2 = document.createElement("img");
+        header2.setAttribute("class", "col-2 text-end");
+        header2.setAttribute("style", "display: inline; height: 1.5rem; width: auto;");
+        row.appendChild(header2);
+        switch (colonyData['name'][key]) {
+        case 'true': header2.setAttribute("src", "./teleport.png");
+          break;
+        case 'false': header2.setAttribute("src", "./teleport-false.png");
+          break;
+        }
+      }
+
+      var comment = document.createElement("div");
+      comment.setAttribute("class", "col-11");
+      row.appendChild(comment);
+      comment.textContent = colonyData['recommendation'] + " " + colonyData['comment'];
+      switch (colonyData['recommendation']) {
+        case '◎': comment.setAttribute("style", "background-color: #fff; color: #10a3e3; margin-bottom: 0.5rem;");
+          break;
+        case '〇': comment.setAttribute("style", "background-color: #fff; color: #239b12; margin-bottom: 0.5rem;");
+          break;
+        case '△': comment.setAttribute("style", "background-color: #fff; color: #f1a100; margin-bottom: 0.5rem;");
+          break;
+        case '×': comment.setAttribute("style", "background-color: #fff; color: #ff2683; margin-bottom: 0.5rem;");
+          break;
+      }
+
+      for (key in colonyData['item']) {
+        var itemKey = document.createElement("div");
+        itemKey.setAttribute("class", "col-8");
+        itemKey.setAttribute("style", "font-size: 14px; color: #595959;");
+        row.appendChild(itemKey);
+        itemKey.textContent = key;
+
+        var itemValue = document.createElement("div");
+        itemValue.setAttribute("class", "col-3 text-end");
+        itemValue.setAttribute("style", "font-size: 14px; color: #595959;");
+        row.appendChild(itemValue);
+        itemValue.textContent = colonyData['item'][key];
+      }
+
+      return row;
+    }
+    // 現在時刻を表示
+    function sampleDate(date, format) {
+      var weekStr = new String('日月火水木金土');
+      format = format.replace(/YYYY/, date.getFullYear());
+      format = format.replace(/MM/, ('0' + (date.getMonth() + 1)).slice(-2));
+      format = format.replace(/DD/, ('0' + date.getDate()).slice(-2));
+      format = format.replace(/W/, weekStr.charAt(date.getDay()));
+      format = format.replace(/hh/, ('0' + date.getHours()).slice(-2));
+      format = format.replace(/mm/, ('0' + date.getMinutes()).slice(-2));
+      return format;
+    }
+    // 時刻をデータキーへ変換
+    function date2key(date) {
+      var key = "wh";
+      key = key.replace(/w/, date.getUTCDay());
+      key = key.replace(/h/, date.getUTCHours() % 8);
+      return key;
+    }
+  </script>
+
+</body>
+
+</html>
